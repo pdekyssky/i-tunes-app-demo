@@ -1,39 +1,25 @@
+import { Route, Routes } from "react-router-dom";
 
-import { Route, Routes } from 'react-router-dom'
-
-//styles
-// import reactLogo from './assets/react.svg'
-import './App.css'
-
-//components
-import  Navigation  from './components/Navigation.tsx'
-
-//pages
-import Home from './pages/Home.tsx'
-import Music from './pages/Music.tsx'
-import About from './pages/About.tsx'
-
+import Navigation from "./components/Navigation.tsx";
+import About from "./pages/About.tsx";
+import Home from "./pages/Home.tsx";
+import Music from "./pages/Music.tsx";
 
 function App() {
-
   return (
-  <div className='header App-header'>
-    <header>
-      <Navigation/>
-    </header>
-    <main>
-      <Routes>
-        <Route path='/' element={<Home />}></Route>
-        <Route path='/music' element={<Music />}></Route>
-        <Route path='/about' element={<About />}></Route>
-      </Routes>
-    </main>
-
-    <footer>
-       {/* <img src={reactLogo} className='App-logo' alt='logo' /> */}
-    </footer>
-  </div>    
-  )
+    <div className="min-h-screen bg-neutral-950 text-neutral-100">
+      <header className="border-b border-neutral-800 bg-neutral-900">
+        <Navigation />
+      </header>
+      <main>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/music" element={<Music />} />
+          <Route path="/about" element={<About />} />
+        </Routes>
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;

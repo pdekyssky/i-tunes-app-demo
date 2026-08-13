@@ -1,66 +1,42 @@
-import { useState } from "react"
-import type { Song } from "../types/types"
+import { useState } from "react";
 
-import MusicSearchBar from "../components/music/MusicSearchBar"
-import MusicList from "../components/music/MusicList"
+import MusicList from "../components/music/MusicList";
+import MusicSearchBar from "../components/music/MusicSearchBar";
+import PageContainer from "../components/PageContainer";
+import type { ITunesSong, Song } from "../types/types";
+import { buildITunesSearchUrl, mapITunesSongToSong } from "../utils/itunes";
 
-interface songFromITunes {
-  trackId: number,
-  trackName: string,
-  artistName: string,
-  collectionName: string,
-  artworkUrl100: string,
-  previewUrl: string,
-  kind?: string
-}
-//component
 const Music = () => {
+  const [songs, setSongs] = useState<Song[]>([]);
 
-  //state
-  const [songs, setSongs] = useState( [] )
-
-
-  //fetch from itunes api
   const handleSearch = async (query: string) => {
     try {
-      const url = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=5`
-      const res = await fetch(url)
+      const res = await fetch(buildITunesSearchUrl(query));
 
       if (!res.ok) {
-        throw new Error('Network response was not okey')
+        throw new Error("Network response was not ok");
       }
-      const data = await res.json()
-      //filter songs add to state
-      let iTunesSongs = data.results.filter(
-        (song:songFromITunes)=> song.kind === 'song' ).
-        map( (song: songFromITunes) => extractData(song))
 
+      const data = await res.json();
+      const iTunesSongs = data.results
+        .filter((song: ITunesSong) => song.kind === "song")
+        .map(mapITunesSongToSong);
 
-      setSongs(iTunesSongs)
-
+      setSongs(iTunesSongs);
     } catch (error) {
-      console.log('Error fetching music data:', error)
+      console.error("Error fetching music data:", error);
     }
-  }
+  };
 
- //destructure itunes data
-   const extractData = ( { 
-    trackId: id,
-    trackName: title,
-    artistName: artist,
-    collectionName: album,
-    artworkUrl100: artwork,
-    previewUrl: audioFile
-  } : songFromITunes) => {
-     return { id, title, artist, album, artwork, audioFile } as Song
-   }
+  return (
+    <div>
+      <PageContainer className="pb-0 text-center">
+        <h1 className="text-3xl font-semibold text-neutral-50">Music</h1>
+      </PageContainer>
+      <MusicSearchBar onSearch={handleSearch} />
+      <MusicList songs={songs} />
+    </div>
+  );
+};
 
-   return ( 
-  <div>
-    <h1>Music</h1>
-    <MusicSearchBar onSearch = {handleSearch}/>
-    <MusicList songs = {songs}/> 
-  </div>
-  )
-}
-export default Music
+export default Music;
